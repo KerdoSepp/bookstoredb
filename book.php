@@ -4,7 +4,7 @@ require "connection.php";
 
 $id = $_GET['id'] ?? null;
 
-$stmt = $pdo->prepare('SELECT id, title, cover_path, price FROM books WHERE id = :id');
+$stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id');
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
 
@@ -36,8 +36,14 @@ $authors = $stmt->fetchAll();
     <?php } ?>
 </ul>
 <img src="<?= $book['cover_path'] ?>">
-<p><?= round($book['price'], 2)."€" ?></p>
-<button>Change</button>
+<p>Release date: <?= $book['release_date'] ?></p>
+<p>Language: <?= $book['language'] ?></p>
+<p>Summary: <?= $book['summary'] ?></p>
+<p>Price: <?= round($book['price'], 2)."€" ?></p>
+<p>Stock: <?= $book['stock_saldo'] ?></p>
+<p>Pages: <?= $book['pages'] ?></p>
+<p>Type: <?= $book['type'] ?></p>
+<button onclick="window.location.href='edit.php?id=<?= $book['id'] ?>'">Change</button>
 <button>Delete</button>
 </body>
 </html>
