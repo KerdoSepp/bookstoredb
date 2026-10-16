@@ -4,6 +4,8 @@ require "connection.php";
 
 $id = $_GET['id'] ?? null;
 
+$isSuccess = $_GET['update'] ?? null;
+
 $stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id');
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
@@ -27,6 +29,13 @@ $authors = $stmt->fetchAll();
     <title>Document</title>
 </head>
 <body>
+
+<?php if ($isSuccess == "success") { ?>
+
+<b style="color:green;">Muudatused salvestatud</b><br><br>
+
+<?php } ?>
+
 <button onclick="window.location.href='index.php'">Back</button>
 <h1><?= $book['title'] ?></h1>
 <h2>Authors:</h2>

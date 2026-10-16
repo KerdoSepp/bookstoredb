@@ -8,45 +8,23 @@ $stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, sum
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $stmt = $pdo->prepare('
-        UPDATE books
-        SET title = :title,
-            release_date = :release_date,
-            cover_path = :cover_path,
-            language = :language,
-            summary = :summary,
-            price = :price,
-            stock_saldo = :stock_saldo,
-            pages = :pages
-        WHERE id = :id
-    ');
-
-    $stmt->execute([
-        'title'        => $_POST['title'],
-        'release_date' => $_POST['release_date'],
-        'cover_path'   => $_POST['cover_path'],
-        'language'     => $_POST['language'],
-        'summary'      => $_POST['summary'],
-        'price'        => $_POST['price'],
-        'stock_saldo'  => $_POST['stock_saldo'],
-        'pages'        => $_POST['pages'],
-        'id'           => $book['id'],
-    ]);
-
-header("Refresh:0");
-
-echo "<script type='text/javascript'>alert('Database updated');</script>";
-}
-
+//book authors
 $stmt = $pdo->prepare('
-    SELECT authors.first_name, authors.last_name
+    SELECT authors.id, authors.first_name, authors.last_name
     FROM authors
     JOIN book_authors ON authors.id = book_authors.author_id
     WHERE book_authors.book_id = :id
 ');
 
 $stmt->execute(['id' => $id]);
+$bookAuthors = $stmt->fetchAll();
+
+// all authors
+$stmt = $pdo->query('
+    SELECT id, first_name, last_name
+    FROM authors
+    ORDER BY first_name, last_name
+');
 $authors = $stmt->fetchAll();
 ?>
 
@@ -61,24 +39,57 @@ $authors = $stmt->fetchAll();
 <body>
 <button onclick="window.location.href='book.php?id=<?= $book['id'] ?>'">Back</button>
 <h1>Id: <?= $book['id'] ?></h1>
-<form method="post" action="edit.php?id=<?=$book['id'] ?>">
-  <label for="title">Title:</label>
+  <h2>Authors:</h2>
+  <ul>
+      <?php foreach ($bookAuthors as $author) { ?>
+        <li value="<?= $author['id'] ?>"><?= $author['first_name'] . ' ' . $author['last_name'] ?></li>
+    <?php } ?>
+    </ul>
+    <h3>Add author:</h3>
+        <a for="authors">All authors:</a>
+        <form method="post" action="add_author_to_book.php">
+          <input type="hidden" name="id" value="<?= $book['id'] ?>">
+<select id="authors" name="author">
+    <?php foreach ($authors as $author) { ?>
+        <option value="<?= $author['id'] ?>"><?= $author['first_name'] . ' ' . $author['last_name'] ?></option>
+    <?php } ?>
+</select>
+        <button type="submit">Add</button>
+    </form>
+      <h3>Change author:</h3>
+
+    <?php foreach ($bookAuthors as $author) { ?>
+    <form method="post" action="delete_author_from_book.php">
+        <input type="hidden" name="id" value="<?= $book['id'] ?>">
+        <input type="hidden" name="author" value="<?= $author['id'] ?>">
+
+        <?=$author['first_name'] . ' ' . $author['last_name'] ?>
+
+        <button type="submit">Remove</button>
+    </form>
+<?php } ?>
+
+<form method="post" action="update_book.php">
+  <input type="hidden", name="id", value="<?= $book['id'] ?>">
+  <h2>Book:</h2>
+  <a for="title">Title:</a>
   <input type="text" id="title" name="title" value="<?= $book['title'] ?>"><br><br>
-  <label for="release_date">Release date:</label>
+  <a for="release_date">Release date:</a>
   <input type="text" id="release_date" name="release_date" value="<?= $book['release_date'] ?>"><br><br>
-    <label for="cover_path">Cover path:</label>
+    <a for="cover_path">Cover path:</a>
   <input type="text" id="cover_path" name="cover_path" value="<?= $book['cover_path'] ?>"><br><br>
-    <label for="language">Language:</label>
+    <a for="language">Language:</a>
   <input type="text" id="language" name="language" value="<?= $book['language'] ?>"><br><br>
-    <label for="summary">Summary:</label>
+    <a for="summary">Summary:</a>
   <input type="text" id="summary" name="summary" value="<?= $book['summary'] ?>"><br><br>
-    <label for="price">Price:</label>
+    <a for="price">Price:</a>
   <input type="text" id="price" name="price" value="<?= $book['price'] ?>"><br><br>
-    <label for="stock_saldo">Stock saldo:</label>
+    <a for="stock_saldo">Stock saldo:</a>
   <input type="text" id="stock_saldo" name="stock_saldo" value="<?= $book['stock_saldo'] ?>"><br><br>
-    <label for="pages">Pages:</label>
+    <a for="pages">Pages:</a>
   <input type="text" id="pages" name="pages" value="<?= $book['pages'] ?>"><br><br>
-  <input type="submit" value="Submit">
+  <button type="submit" value="Submit">Submit</button>
 </form>
+
 </body>
 </html>
