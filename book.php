@@ -11,13 +11,15 @@ $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
 
 $stmt = $pdo->prepare('
-    SELECT authors.first_name, authors.last_name
-    FROM authors
-    JOIN book_authors ON authors.id = book_authors.author_id
-    WHERE book_authors.book_id = :id
+    SELECT first_name, last_name
+    FROM book_authors ba
+    LEFT JOIN authors a
+    ON ba.author_id = a.id
+    WHERE ba.book_id = :id
 ');
 $stmt->execute(['id' => $id]);
 $authors = $stmt->fetchAll();
+
 ?>
 
 

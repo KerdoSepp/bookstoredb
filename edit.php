@@ -40,11 +40,6 @@ $authors = $stmt->fetchAll();
 <button onclick="window.location.href='book.php?id=<?= $book['id'] ?>'">Back</button>
 <h1>Id: <?= $book['id'] ?></h1>
   <h2>Authors:</h2>
-  <ul>
-      <?php foreach ($bookAuthors as $author) { ?>
-        <li value="<?= $author['id'] ?>"><?= $author['first_name'] . ' ' . $author['last_name'] ?></li>
-    <?php } ?>
-    </ul>
     <h3>Add author:</h3>
         <a for="authors">All authors:</a>
         <form method="post" action="add_author_to_book.php">
