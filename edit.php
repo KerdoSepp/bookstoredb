@@ -10,22 +10,23 @@ $book = $stmt->fetch();
 
 //book authors
 $stmt = $pdo->prepare('
-    SELECT authors.id, authors.first_name, authors.last_name
-    FROM authors
-    JOIN book_authors ON authors.id = book_authors.author_id
-    WHERE book_authors.book_id = :id
+    SELECT  a.id, first_name, last_name
+    FROM book_authors ba
+    LEFT JOIN authors a
+    ON ba.author_id = a.id
+    WHERE ba.book_id = :id
 ');
-
 $stmt->execute(['id' => $id]);
 $bookAuthors = $stmt->fetchAll();
 
 // all authors
 $stmt = $pdo->query('
-    SELECT id, first_name, last_name
+    SELECT *
     FROM authors
     ORDER BY first_name, last_name
 ');
 $authors = $stmt->fetchAll();
+
 ?>
 
 
@@ -45,7 +46,13 @@ $authors = $stmt->fetchAll();
         <form method="post" action="add_author_to_book.php">
           <input type="hidden" name="id" value="<?= $book['id'] ?>">
 <select id="authors" name="author">
-    <?php foreach ($authors as $author) { ?>
+<?php foreach ($authors as $author) {
+    if (array_filter($bookAuthors, function ($bookAuthor) use ($author) {
+        return $bookAuthor['id'] == $author['id'];
+    })) {
+        continue;
+    }
+?>
         <option value="<?= $author['id'] ?>"><?= $author['first_name'] . ' ' . $author['last_name'] ?></option>
     <?php } ?>
 </select>
