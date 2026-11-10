@@ -5,10 +5,15 @@ require "connection.php";
 $id = $_GET['id'] ?? null;
 
 $isSuccess = $_GET['update'] ?? null;
+$isDeleted = $_GET['delete'] ?? null;
 
-$stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id');
+$stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id AND is_deleted = 0');
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
+
+if (!$book) {
+    exit('Book not found.');
+}
 
 $stmt = $pdo->prepare('
     SELECT first_name, last_name
@@ -38,6 +43,12 @@ $authors = $stmt->fetchAll();
 
 <?php } ?>
 
+<?php if ($isDeleted == "success") { ?>
+
+<b style="color:red;">Autor kustutatud</b><br><br>
+
+<?php } ?>
+
 <button onclick="window.location.href='index.php'">Back</button>
 <h1><?= $book['title'] ?></h1>
 <h2>Authors:</h2>
@@ -55,6 +66,5 @@ $authors = $stmt->fetchAll();
 <p>Pages: <?= $book['pages'] ?></p>
 <p>Type: <?= $book['type'] ?></p>
 <button onclick="window.location.href='edit.php?id=<?= $book['id'] ?>'">Change</button>
-<button>Delete</button>
 </body>
 </html>

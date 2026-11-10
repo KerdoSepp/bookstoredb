@@ -4,9 +4,13 @@ require "connection.php";
 
 $id = $_GET['id'] ?? null;
 
-$stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id');
+$stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, summary, price, stock_saldo, pages, type FROM books WHERE id = :id AND is_deleted = 0');
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
+
+if (!$book) {
+    exit('Book not found.');
+}
 
 //book authors
 $stmt = $pdo->prepare('
@@ -91,6 +95,11 @@ $authors = $stmt->fetchAll();
     <a for="pages">Pages:</a>
   <input type="text" id="pages" name="pages" value="<?= $book['pages'] ?>"><br><br>
   <button type="submit" value="Submit">Submit</button>
+</form>
+
+<form method="post" action="delete_book.php">
+  <input type="hidden" name="id" value="<?= $book['id'] ?>">
+  <button type="submit" value="Submit">Delete</button>
 </form>
 
 </body>

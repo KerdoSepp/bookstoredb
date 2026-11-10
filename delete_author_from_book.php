@@ -15,4 +15,4 @@ $stmt->execute([
     'author_id' => $authorId,
 ]);
 
-header("Location: book.php?id=$bookId&update=success");
+header("Location: book.php?id=$bookId&delete=success");
