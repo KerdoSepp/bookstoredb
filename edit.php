@@ -8,9 +8,6 @@ $stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, sum
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
 
-if (!$book) {
-    exit('Book not found.');
-}
 
 //book authors
 $stmt = $pdo->prepare('
@@ -42,6 +39,12 @@ $authors = $stmt->fetchAll();
     <title>Document</title>
 </head>
 <body>
+
+<?php 
+if (!$book) { ?>
+    <button onclick="window.location.href='index.php'">Back</button><br><br>
+<?php exit('Book not found.'); } ?>
+
 <button onclick="window.location.href='book.php?id=<?= $book['id'] ?>'">Back</button>
 <h1>Id: <?= $book['id'] ?></h1>
   <h2>Authors:</h2>
@@ -79,21 +82,21 @@ $authors = $stmt->fetchAll();
   <input type="hidden", name="id", value="<?= $book['id'] ?>">
   <h2>Book:</h2>
   <a for="title">Title:</a>
-  <input type="text" id="title" name="title" value="<?= $book['title'] ?>"><br><br>
+  <input type="text" id="title" name="title" value="<?= $book['title'] ?>" required><br><br>
   <a for="release_date">Release date:</a>
-  <input type="text" id="release_date" name="release_date" value="<?= $book['release_date'] ?>"><br><br>
+  <input type="text" id="release_date" name="release_date" value="<?= $book['release_date'] ?>" required><br><br>
     <a for="cover_path">Cover path:</a>
-  <input type="text" id="cover_path" name="cover_path" value="<?= $book['cover_path'] ?>"><br><br>
+  <input type="text" id="cover_path" name="cover_path" value="<?= $book['cover_path'] ?>" required><br><br>
     <a for="language">Language:</a>
-  <input type="text" id="language" name="language" value="<?= $book['language'] ?>"><br><br>
+  <input type="text" id="language" name="language" value="<?= $book['language'] ?>" required><br><br>
     <a for="summary">Summary:</a>
-  <input type="text" id="summary" name="summary" value="<?= $book['summary'] ?>"><br><br>
+  <input type="text" id="summary" name="summary" value="<?= $book['summary'] ?>" required><br><br>
     <a for="price">Price:</a>
-  <input type="text" id="price" name="price" value="<?= $book['price'] ?>"><br><br>
+  <input type="text" id="price" name="price" value="<?= $book['price'] ?>" required><br><br>
     <a for="stock_saldo">Stock saldo:</a>
-  <input type="text" id="stock_saldo" name="stock_saldo" value="<?= $book['stock_saldo'] ?>"><br><br>
+  <input type="text" id="stock_saldo" name="stock_saldo" value="<?= $book['stock_saldo'] ?>" required><br><br>
     <a for="pages">Pages:</a>
-  <input type="text" id="pages" name="pages" value="<?= $book['pages'] ?>"><br><br>
+  <input type="text" id="pages" name="pages" value="<?= $book['pages'] ?>" required><br><br>
   <button type="submit" value="Submit">Submit</button>
 </form>
 

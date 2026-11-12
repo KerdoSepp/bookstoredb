@@ -11,10 +11,6 @@ $stmt = $pdo->prepare('SELECT id, title, release_date, cover_path, language, sum
 $stmt->execute(['id' => $id]);
 $book = $stmt->fetch();
 
-if (!$book) {
-    exit('Book not found.');
-}
-
 $stmt = $pdo->prepare('
     SELECT first_name, last_name
     FROM book_authors ba
@@ -36,6 +32,11 @@ $authors = $stmt->fetchAll();
     <title>Document</title>
 </head>
 <body>
+    
+<?php 
+if (!$book) { ?>
+    <button onclick="window.location.href='index.php'">Back</button><br><br>
+<?php exit('Book not found.'); } ?>
 
 <?php if ($isSuccess == "success") { ?>
 

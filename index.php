@@ -19,6 +19,7 @@ if ($search === "") {
     $stmt->execute(["search" => "%" . $search . "%"]);
 }
 
+
 ?>
 
 <!DOCTYPE html>
@@ -53,11 +54,20 @@ if ($search === "") {
 
 
     <ul>
-<?php while ($book = $stmt->fetch() ) { ?>
+<?php
+$found = false;
+
+ while ($book = $stmt->fetch() ) { ?>
     <li>
     <a href="book.php?id=<?= $book['id'] ?>"><?= $book['title'] ?></a>
     </li>
+<?php $found = true; } ?>
+
+<?php 
+if ($found === false) { ?>
+    <p>No books found.</p>
 <?php } ?>
+
     </ul>
 </body>
 </html>
